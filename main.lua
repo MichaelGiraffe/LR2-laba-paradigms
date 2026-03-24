@@ -23,6 +23,7 @@ end
 
 
 function ordCounter(mas,str)
+	str=str:lower()
 	for j=1,26 do
 		mas[j]=0
 	end
@@ -90,9 +91,58 @@ function generatePal(mas_copy)
 	
 	--создаем палиндром
 	generated=generated..center..string.reverse(generated)
-	--тут потом придется досоздавать палиндром
+	--выводим палиндром
 	print(generated)
 end
+
+
+-- Функция проверки на равенство совпадения кол-ва символов из файла
+function canBuild(str, mas)
+	local temp_mas = {}
+	for i = 1, 26 do 
+		temp_mas[i] = mas[i] 
+	end
+
+	str = str:lower()
+	for j = 1, #str do
+		local byte = string.byte(str, j)
+		local index = byte - 96
+
+		if index >= 1 and index <= 26 then
+			if temp_mas[index] > 0 then
+				temp_mas[index] = temp_mas[index] - 1
+			else
+				return false
+			end
+		end
+	end
+	return true
+end
+--функция для подбора списка слов из словаря
+function findSimilar(filename, current_mas)
+	local file = io.open(filename, "r")
+	if not file then
+		print("Файл " .. filename .. " не найден.")
+		return
+	end
+
+	print("--- Подходящие ---")
+	local found_any = false
+	for line in file:lines() do
+		-- Убираем лишние пробелы/переносы
+		local word = line:gsub("%s+", "")
+		if word ~= "" and canBuild(word, current_mas) then
+			print(line)
+			found_any = true
+		end
+	end
+	file:close()
+
+	if not found_any then
+		print("Палиндромов из словаря не обнаружено")
+	end
+end
+
 
 
 mas={}
@@ -121,11 +171,12 @@ while true do
 		ordCounter(mas,attr)
 		generatePal(mas_copy)
 	end
-	if i==2 then
-		print('добавить поиск палиндрома из файла')
+	if i == 2 then
+		-- Передаем имя файла и наш основной массив с буквами
+		findSimilar("palindromsDictEng.txt", mas)
 	end
 	if i==3 then
-		ordCounter(mas,attr)
-		print('новый ввод строки')
+		vvod = io.read()
+        ordCounter(mas, vvod)
 	end
 end
