@@ -34,10 +34,6 @@ function ordCounter(mas,str)
 		index=index+1
 	end
 	index=1
-	print('вывод символов')
-	for index=1,26 do
-		print(mas[index])
-	end
 	print('сделано')
 end
 
